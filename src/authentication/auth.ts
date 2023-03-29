@@ -5,7 +5,7 @@ export interface CustomRequest extends Request{
     token: String | JwtPayload
 }
 
-async function auth(req: Request, res: Response, next: NextFunction){
+const auth = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const token = req.header('Authorization')?.replace('Bearer', '')
 
@@ -13,12 +13,12 @@ async function auth(req: Request, res: Response, next: NextFunction){
             throw new Error();
         }
 
-        const decode = jwt.verify(token, `${process.env.secretToken}`);
-        (req as CustomRequest).token = decode
+        const decoded = jwt.verify(token, `${process.env.secretToken}`);
+        (req as CustomRequest).token = decoded
 
         next();
-    } catch (e) {
-        res.status(401).send('Please authenticate');
+    } catch (e: any) {
+       return res.status(401).json(e.message);
     }
 }
 
