@@ -1,5 +1,6 @@
 import { app } from "./app/app.module";
 import usersController from './controllers/usersController'
+import tasksController from "./controllers/tasksController";
 import mongoose from "mongoose";
 import dotenv from 'dotenv'
 
@@ -12,6 +13,7 @@ function main(): void {
         console.log('Connected to database')
     })
     usersController('/users')
+    tasksController('/tasks')
 
     app.listen(process.env.port, () => {
         console.log('Server is listening on ' + process.env.port)
