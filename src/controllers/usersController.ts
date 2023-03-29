@@ -1,4 +1,5 @@
-import jwt, { JwtPayload } from 'jsonwebtoken';
+import jwt from 'jsonwebtoken';
+import bcrypt from 'bcrypt';
 import { app } from "../app/app.module";
 import { Request, Response } from "express";
 import Users from "../models/usersModel";
@@ -8,11 +9,14 @@ function usersController (url: string) : void {
         try {
             const existingUser = await Users.findOne({email: req.body.email})
             if (existingUser) return res.status(400).json({message: "User already exists!"})
+
+            const salt = await bcrypt.genSalt(10)
+
             const user = new Users({
                 name: req.body.name,
                 username: req.body.username,
                 email: req.body.email,
-                password: req.body.password
+                password: await bcrypt.hash(req.body.password, salt)
             })
             const token = jwt.sign({_id: user?._id.toString()}, `${process.env.secretToken}`, {expiresIn: '2 days'})
             await user.save()
@@ -30,8 +34,9 @@ function usersController (url: string) : void {
                 return res.status(404).json({message: 'Username or password is incorrect!'})
             }
 
-            const userPsw = await Users.findOne({password: req.body.password})
-            if (userPsw) {
+            const isMatch = await bcrypt.compareSync(req.body.password, user.password)
+
+            if (isMatch) {
                 const token = jwt.sign({_id: user?._id.toString()}, `${process.env.secretToken}`, {expiresIn: '2 days'})
                 return res.status(200).json({user, token})
             } 
