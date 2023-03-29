@@ -29,7 +29,11 @@ const tasksController = (url: string) => {
 
     app.get(url, auth, async (req: Request, res: Response) => {
         try {
-            const alltasks = await Tasks.find();   
+            let payload = (req as CustomRequest).token as JwtPayload
+            let user = await users.findById(payload._id)
+            if (!user) return res.status(400).json({ message: 'Acces denied!'})
+
+            const alltasks = await Tasks.find({ user: user._id});   
             res.status(200).json(alltasks);
         } catch (e) {
             res.json(e)
