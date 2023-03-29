@@ -2,11 +2,15 @@ import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
 import { app } from "../app/app.module";
 import { Request, Response } from "express";
+import { userSignValidator, userLogValidator }  from "../validation/validation"
 import Users from "../models/usersModel";
 
 function usersController (url: string) : void {
     app.post(url + '/register', async (req: Request, res: Response) => {
         try {
+            const {error} = userSignValidator(req.body);
+            if (error) return res.status(400).send(error.details[0].message);
+
             const existingUser = await Users.findOne({email: req.body.email})
             if (existingUser) return res.status(400).json({message: "User already exists!"})
 
@@ -18,6 +22,7 @@ function usersController (url: string) : void {
                 email: req.body.email,
                 password: await bcrypt.hash(req.body.password, salt)
             })
+
             const token = jwt.sign({_id: user?._id.toString()}, `${process.env.secretToken}`, {expiresIn: '2 days'})
             await user.save()
             return res.status(200).json({user, token})
@@ -29,6 +34,9 @@ function usersController (url: string) : void {
 
     app.post(url + '/login', async (req: Request, res: Response) => {
         try {
+            const {error} = userLogValidator(req.body);
+            if (error) return res.status(400).send(error.details[0].message);
+
             const user = await Users.findOne({username: req.body.username})
             if (!user) {
                 return res.status(404).json({message: 'Username or password is incorrect!'})
