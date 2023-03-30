@@ -13,7 +13,7 @@ const auth = async (req: Request, res: Response, next: NextFunction) => {
             throw new Error();
         }
 
-        const decoded = jwt.verify(token, `${process.env.secretToken}`);
+        const decoded = jwt.verify(token, process.env.secretToken as string);
         (req as CustomRequest).token = decoded
 
         next();
