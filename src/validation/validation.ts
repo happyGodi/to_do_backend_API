@@ -21,7 +21,7 @@ const userLogValidator = (data: object) => {
 
 const taskValidator = (data: object) => {
     const schema = joi.object().keys({
-        name: joi.string().required(),
+        taskname: joi.string().required(),
         isDone: joi.boolean().required()
     })
 
