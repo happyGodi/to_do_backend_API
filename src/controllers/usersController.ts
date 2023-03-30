@@ -1,4 +1,5 @@
-import jwt from 'jsonwebtoken';
+import auth, { CustomRequest } from './../authentication/auth';
+import jwt, { JwtPayload } from 'jsonwebtoken';
 import bcrypt from 'bcrypt'
 import { app } from "../app/app.module";
 import { Request, Response } from "express";
@@ -27,8 +28,7 @@ function usersController (url: string) : void {
             await user.save()
             return res.status(200).json({token})
         } catch (e) {
-            console.log(e)
-            res.status(500).json({message: "Internal server error!"})
+            return res.status(500).json({message: "Internal server error!"})
         }
     })
 
@@ -65,14 +65,11 @@ function usersController (url: string) : void {
             res.status(500).json({message: "Internal server error!"})
         }
     })
-    app.get(url + '/:id',async (req: Request, res: Response) => {
+    app.get(url + '/one', auth, async (req: Request, res: Response) => {
         try {
-            /*
-            let payload = (req as CustomRequest).user as JwtPayload
-            let userAuth = await users.findById(payload._id)
-            if (!userAuth) return res.status(400).json({message: 'Access denied'})
-            */
-            const user = await Users.findById(req.params.id)
+            let payload = (req as CustomRequest).token as JwtPayload
+            let user = await Users.findById(payload._id)
+            if (!user) return res.status(400).json({message: 'Access denied'})
             return res.status(200).json(user)
         } catch (e) {
             return res.status(500).json(e)
