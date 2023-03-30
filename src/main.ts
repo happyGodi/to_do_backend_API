@@ -5,13 +5,13 @@ import mongoose from "mongoose";
 import dotenv from 'dotenv'
 
 dotenv.config()
-
-function main(): void {
+async function main(): Promise<void> {
     //db connection
     mongoose.set('strictQuery', true)
-    mongoose.connect(`${process.env.db_connection}`, () => {
-        console.log('Connected to database')
-    })
+    
+    await mongoose.connect(process.env.db_connection as string)
+            .then(() => { console.log('Connected to database') })
+            .catch((err) => { console.log('Error when connecting ', err) })
     usersController('/users')
     tasksController('/tasks')
 

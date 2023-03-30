@@ -18,14 +18,16 @@
   },
   "dependencies": {
     "@types/bcrypt": "^5.0.0",
+    "@types/cors": "^2.8.13",
     "@types/jsonwebtoken": "^9.0.1",
     "@types/mongoose": "^5.11.97",
     "bcrypt": "^5.1.0",
     "dotenv": "^16.0.3",
+    "express": "^4.18.2",
     "joi": "^17.9.1",
     "joi-to-typescript": "^4.1.0",
     "jsonwebtoken": "^9.0.0",
-    "mongoose": "^6.9.1",
+    "mongoose": "^6.10.4",
     "nodemon": "^2.0.20"
   }
 }
