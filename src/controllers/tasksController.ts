@@ -56,6 +56,20 @@ const tasksController = (url: string) => {
             return res.json(e)
         }
     })
+    app.delete(url + '/clear', auth, async (req: Request, res: Response) => {
+        try {
+            let payload = (req as CustomRequest).token as JwtPayload
+            let user = await users.findById(payload._id)
+            if (!user) return res.status(400).json({ message: 'Acces denied!'})
+
+            await Tasks.deleteMany()
+            user?.tasks.splice(0, user?.tasks.length)
+            user?.save()
+            return res.status(200).json({ message: 'All task deleted successfully' })
+        } catch (e) {
+            return res.json(e)
+        }
+    })
     app.put(url + '/update/:id', auth, async (req: Request, res: Response) => {
         try {
 
