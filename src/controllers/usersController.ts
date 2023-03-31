@@ -26,7 +26,7 @@ function usersController (url: string) : void {
 
             const token = jwt.sign({_id: user?._id.toString()}, `${process.env.secretToken}`, {expiresIn: '2 days'})
             await user.save()
-            return res.status(200).json({token})
+            return res.status(200).json({user, token})
         } catch (e) {
             return res.status(500).json({message: "Internal server error!"})
         }
@@ -46,7 +46,7 @@ function usersController (url: string) : void {
 
             if (isMatch) {
                 const token = jwt.sign({_id: user?._id.toString()}, `${process.env.secretToken}`, {expiresIn: '2 days'})
-                return res.status(200).json({token})
+                return res.status(200).json({user, token})
             } 
             else {
                 return res.status(400).json({message: 'Username or password is incorrect!'})
