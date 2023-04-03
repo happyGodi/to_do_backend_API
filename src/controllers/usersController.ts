@@ -24,7 +24,7 @@ function usersController (url: string) : void {
                 password: await bcrypt.hash(req.body.password, salt)
             })
 
-            const token = jwt.sign({_id: user?._id.toString()}, `${process.env.secretToken}`, {expiresIn: '2 days'})
+            const token = jwt.sign({_id: user?._id.toString()}, `${process.env.secretToken}`, {expiresIn: '5h'})
             await user.save()
             return res.status(200).json({
                 name: user.name,
@@ -50,7 +50,7 @@ function usersController (url: string) : void {
             const isMatch = await bcrypt.compareSync(req.body.password, user.password)
 
             if (isMatch) {
-                const token = jwt.sign({_id: user?._id.toString()}, `${process.env.secretToken}`, {expiresIn: '2 days'})
+                const token = jwt.sign({_id: user?._id.toString()}, `${process.env.secretToken}`, {expiresIn: '5h'})
                 return res.status(200).json({
                     name: user.name,
                     username: user.username,
